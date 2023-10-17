@@ -27,8 +27,8 @@ from arguments import *
 
 
 #parser = argparse.ArgumentParser() args.batch_size
-#parser.add_argument("band_set", help="這是第 1 個引數，請輸入執行dataset")
-#parser.add_argument("band_num", help="這是第 2 個引數，請輸入整數", type = int)
+#parser.add_argument("band_set", help="This is the first argument, please enter the dataset to execute.")
+#parser.add_argument("band_num", help="This is the second argument, please enter an integer.", type = int)
 #args = parser.parse_args()
 
 
@@ -45,7 +45,7 @@ print(tf.__version__)
 
 #tf.test.is_gpu_available()
 
-# 檢查檔案夾是否存在，若有資料則清掉所有資料；若無資料夾，則新增一個資料夾。
+# Check if the folder exists; if a folder exists, clear all its data. If no folder exists, create a new one.
 def check(path):  
     paths = path.split('/')
     folder_name = paths[-1]
@@ -94,9 +94,6 @@ val_dataset=val_dataset.batch(BATCH_SIZE)
 test_dataset=test_dataset.batch(BATCH_SIZE)
 
 
-# In[ ]:
-
-
 keras=tf.keras
 layers=tf.keras.layers
 #conv_base=keras.applications.resnet50.ResNet50(weights='imagenet',include_top=False) # original version
@@ -124,7 +121,7 @@ model = keras.models.Model(inputs=model_input, outputs=x)
 print(model.input)
 print(model.output)
 
-#希望网络里面的权重不要动 把卷积积设置为不可训练
+# I want the weights in the network to stay put and the convolutional product to be untrainable.
 conv_base1.trainable=False
 conv_base2.trainable=False
 
@@ -142,10 +139,7 @@ steps_per_epoch=train_count//BATCH_SIZE
 validation_steps=val_count//BATCH_SIZE
 
 
-# In[ ]:
-
-
-#提早结束的回调函数 监听val_acc
+# Early end callback function, listener val_acc
 early_stopping = EarlyStopping(
     monitor='val_acc',
     min_delta=0.0001,
@@ -178,7 +172,7 @@ f.write("BS: " + str(BATCH_SIZE)+" VGG19+ResNet50 Training Time: {}:{:.2f}".form
 def plot_learning_curves(history):
 	# plot the training loss and accuracy
     plt.figure(figsize=(8,5))
-    titleName = "Training / Validation Loss and Accuracy on VGG19+ResNet50_BS:" + str(BATCH_SIZE) + " for " +args.band_set # 圖的 title 名字
+    titleName = "Training / Validation Loss and Accuracy on VGG19+ResNet50_BS:" + str(BATCH_SIZE) + " for " +args.band_set # The title of the graph.
     plt.title(titleName,y=1.05)
     plt.grid(True)
     plt.gca().set_ylim(0,2)
@@ -210,7 +204,7 @@ def plot_learning_curves(history):
 plot_learning_curves(history)
 
 start_time1=time.time()
-#一定要加上batch那一步 而且只能一次 loss acc
+# You must include the batch step, and you can only compute the loss and accuracy once.
 model.evaluate(test_dataset,verbose=0)
 
 end_time1 = time.time()
@@ -257,12 +251,12 @@ def ConfusionMatrixPlot(confmatrix_Input):
     #clsnames = np.arange(0, 8)
     clsnames = np.arange(0, len(target_names))
     tick_marks = np.arange(len(clsnames))
-    titleName = "Confusion matrix of VGG19+ResNet50 for "+args.band_set # 圖的 title 名字
+    titleName = "Confusion matrix of VGG19+ResNet50 for "+args.band_set # The title of the graph.
     plt.figure(figsize=(len(target_names) + 1, len(target_names) + 1))
     plt.title(titleName,fontsize=15,pad=10)
     iters = np.reshape([[[i, j] for j in range(len(clsnames))] for i in range(len(clsnames))], (confmatrix_Input.size, 2))
     for i, j in iters:
-        plt.text(j, i, format(confmatrix_Input[i, j]), fontsize=15, va='center', ha='center')  # 显示对应的数字
+        plt.text(j, i, format(confmatrix_Input[i, j]), fontsize=15, va='center', ha='center')  # Display the corresponding numbers.
 
     plt.gca().set_xticks(tick_marks + 0.5, minor=True)
     plt.gca().set_yticks(tick_marks + 0.5, minor=True)
@@ -270,8 +264,8 @@ def ConfusionMatrixPlot(confmatrix_Input):
     plt.gca().yaxis.set_ticks_position('none')
     plt.grid(True, which='minor', linestyle='-')
 
-    plt.imshow(confmatrix_Input, interpolation='nearest', cmap='cool')  # 按照像素显示出矩阵
-    plt.xticks(tick_marks,target_names) # 9分类 横纵坐标类别名
+    plt.imshow(confmatrix_Input, interpolation='nearest', cmap='cool')  # Display the matrix as pixels.
+    plt.xticks(tick_marks,target_names) # 9-class with category names on the horizontal and vertical axes.
     plt.yticks(tick_marks,target_names)
    
     plt.ylabel('Actual Species',labelpad=-5,fontsize=15)
@@ -340,4 +334,3 @@ ConfusionMatrixPlot(AroundPercentageInput_new)
 end = time.time()
 
 print(end - start)
-
